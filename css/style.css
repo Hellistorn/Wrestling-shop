@@ -1,0 +1,294 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background: #ffffff;
+    color: #000;
+}
+
+.header {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid #000;
+    background: #000;
+}
+
+/* ЛЕВАЯ НАВИГАЦИЯ */
+.nav-left {
+    position: absolute;
+    left: 40px;
+    display: flex;
+    gap: 25px;
+}
+
+.nav-left a {
+    text-decoration: none;
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 1px;
+    transition: 0.3s;
+}
+
+.nav-left a:hover {
+    opacity: 0.5;
+}
+
+/* ЛОГО ПО ЦЕНТРУ */
+.logo {
+    font-size: 24px;
+    font-weight: bold;
+    letter-spacing: 6px;
+    color: #fff;
+}
+
+/* ПРАВАЯ ЧАСТЬ */
+.nav-right {
+    position: absolute;
+    right: 40px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.nav-right input {
+    border: none;
+    border-bottom: 1px solid #fff;
+    outline: none;
+    padding: 5px;
+    background: transparent;
+}
+
+/* КНОПКА КОРЗИНЫ */
+.icon-btn {
+    background: none;
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+.hero {
+    height: 90vh;
+    background: url('../images/hero.jpg') center/cover no-repeat;
+    background-position: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    text-align: center;
+    position: relative;
+}
+
+/* затемнение */
+.hero::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+}
+
+.hero h1,
+.hero p {
+    position: relative;
+    z-index: 2;
+}
+
+.hero h1 {
+    font-size: 56px;
+    letter-spacing: 6px;
+}
+
+
+.products {
+    display: flex;
+    justify-content: center;
+    gap: 40px;
+    padding: 50px;
+}
+
+.product-card {
+    width: 300px;
+    text-align: center;
+    padding: 15px;
+    overflow: hidden;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 0.8s ease;
+}
+
+/* Анимация появления */
+.product-card.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.product-card img {
+    width: 100%;
+    height: 400px;
+    object-fit: cover;
+    margin-bottom: 15px;
+    transition: 0.4s;
+}
+
+/* Эффект при наведении */
+.product-card:hover img {
+    transform: scale(1.05);
+}
+
+/* ===== PROMO SECTION ===== */
+
+.promo {
+    position: relative;
+    height: 80vh;
+    background: url('../images/promo.jpg') center/cover no-repeat;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #fff;
+    overflow: hidden;
+}
+
+/* затемнение */
+.promo::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+}
+
+.promo-content {
+    position: relative;
+    z-index: 2;
+    opacity: 0;
+    transform: translateY(40px);
+    transition: all 1s ease;
+}
+
+/* Анимация появления */
+.promo-content.show {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.promo h2 {
+    font-size: 48px;
+    letter-spacing: 6px;
+    margin-bottom: 20px;
+}
+
+.promo p {
+    font-size: 18px;
+    margin-bottom: 30px;
+    letter-spacing: 2px;
+}
+
+.promo-btn {
+    padding: 12px 30px;
+    border: 1px solid #fff;
+    background: transparent;
+    color: #fff;
+    font-size: 14px;
+    letter-spacing: 2px;
+    cursor: pointer;
+    transition: 0.4s;
+}
+
+.promo-btn:hover {
+    background: #fff;
+    color: #000;
+}
+
+
+button {
+    background: #000;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+button:hover {
+    background: #333;
+}
+
+.cart {
+    position: fixed;
+    right: -400px;
+    top: 0;
+    width: 300px;
+    height: 100%;
+    background: #fff;
+    border-left: 2px solid #000;
+    padding: 20px;
+    transition: 0.3s;
+}
+
+.cart.active {
+    right: 0;
+}
+
+/* ===== FOOTER ===== */
+
+.footer {
+    background: #000;
+    color: #fff;
+    padding: 60px 40px 20px 40px;
+}
+
+.footer-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 40px;
+}
+
+.footer-column {
+    flex: 1;
+    min-width: 200px;
+}
+
+.footer-column h3,
+.footer-column h4 {
+    margin-bottom: 20px;
+    letter-spacing: 2px;
+}
+
+.footer-column p {
+    font-size: 14px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.footer-column a {
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    margin-bottom: 10px;
+    font-size: 14px;
+    opacity: 0.8;
+    transition: 0.3s;
+}
+
+.footer-column a:hover {
+    opacity: 1;
+    padding-left: 5px;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px solid #333;
+    font-size: 13px;
+    opacity: 0.6;
+}
+
