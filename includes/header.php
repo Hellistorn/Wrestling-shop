@@ -7,7 +7,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
         <a href="index.php">Главная</a>
         <a href="catalog.php">Каталог</a>
         <a href="index.php#new-arrivals">Новинки</a>
-        <a href="#">Контакты</a>
     </div>
 
     <div class="logo">
@@ -15,7 +14,6 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
     </div>
 
     <div class="nav-right">
-        <input type="text" placeholder="Поиск..." id="searchInput">
         <button class="icon-btn" onclick="openCart()">🛒</button>
         
         <?php if (isset($_SESSION['is_admin']) && $_SESSION['is_admin'] === true): ?>
@@ -24,3 +22,5 @@ if (session_status() === PHP_SESSION_NONE) { session_start(); }
         <?php endif; ?>
     </div>
 </header>
+
+<?php include 'includes/cart_ui.php'; ?>

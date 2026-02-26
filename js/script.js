@@ -7,21 +7,18 @@ let total = cart.reduce((sum, item) => sum + item.price, 0);
 function addToCart(name, price) {
     cart.push({name, price});
     total += price;
-    saveCart(); // Сохраняем изменения
+    saveCart(); 
     renderCart();
-    
-    // Эффект нажатия (опционально)
     console.log(`${name} добавлен в корзину`);
 }
 
 function renderCart() {
     let list = document.getElementById("cart-items");
+    if (!list) return;
     list.innerHTML = "";
 
     cart.forEach((item, index) => {
         let li = document.createElement("li");
-        
-        // Используем HTML для структуры внутри li
         li.innerHTML = `
             <span>${item.name}</span>
             <span style="margin-right: 15px; font-weight: bold;">${item.price.toLocaleString()} ₸</span>
@@ -30,7 +27,6 @@ function renderCart() {
         list.appendChild(li);
     });
 
-    // Выводим итоговую сумму. toLocaleString() добавит пробелы (18 000 вместо 18000)
     document.getElementById("total").innerHTML = `Итого: <span style="color: #e10600;">${total.toLocaleString()} ₸</span>`;
 }
 
@@ -42,39 +38,89 @@ function removeFromCart(index) {
 }
 
 function saveCart() {
-    // Записываем массив в localStorage
     localStorage.setItem('wrest_cart', JSON.stringify(cart));
 }
 
 function openCart() {
     document.getElementById("cart").classList.add("active");
-    renderCart(); // Перерисовываем при открытии
+    renderCart();
 }
 
 function closeCart() {
     document.getElementById("cart").classList.remove("active");
 }
 
-// Функция для оформления через WhatsApp
-function checkout() {
-    if (cart.length === 0) return alert("Корзина пуста");
-    
-    let message = "Здравствуйте! Я хочу заказать:\n";
-    cart.forEach(item => {
-        message += `- ${item.name} (${item.price} ₸)\n`;
-    });
-    message += `\nИтого: ${total} ₸`;
-    
-    const phone = "77777777777"; // Вставь сюда свой номер
-    window.open(`https://wa.me/${phone}?text=${encodeURIComponent(message)}`, '_blank');
+// --- МОДАЛЬНОЕ ОКНО ОФОРМЛЕНИЯ ---
+
+function openCheckoutForm() {
+    if (cart.length === 0) return alert("Корзина пуста!");
+    document.getElementById("checkout-modal").style.display = "block";
+    document.getElementById("final-price").textContent = total.toLocaleString();
 }
 
-// --- АНИМАЦИИ И СКРОЛЛ (ТВОЯ СХЕМА) ---
+function closeCheckoutForm() {
+    document.getElementById("checkout-modal").style.display = "none";
+}
+
+// --- ОТПРАВКА ЗАКАЗА В WHATSAPP ---
+
+function sendOrder(event) {
+    event.preventDefault(); // Останавливаем перезагрузку страницы
+
+    const orderNumber = "№" + Math.floor(Math.random() * 90000 + 10000);
+    
+    const fio = document.getElementById("fio").value;
+    const phone = document.getElementById("phone").value;
+    const country = document.getElementById("country").value;
+    const city = document.getElementById("city").value;
+    const zip = document.getElementById("zip").value;
+    const address = document.getElementById("address").value;
+
+    let productList = "";
+    cart.forEach((item, index) => {
+        productList += `${index + 1}. ${item.name} — ${item.price.toLocaleString()} ₸\n`;
+    });
+
+    const message = `🛍️ *ЗАКАЗ ${orderNumber}* (WrestSpartan)\n\n` +
+                    `👤 *КЛИЕНТ:* ${fio}\n` +
+                    `📞 *ТЕЛ:* ${phone}\n` +
+                    `--------------------------\n` +
+                    `📍 *АДРЕС ДОСТАВКИ:*\n` +
+                    `🌍 Страна: ${country}\n` +
+                    `🏙️ Город: ${city}\n` +
+                    `📮 Индекс: ${zip}\n` +
+                    `🏠 Адрес: ${address}\n` +
+                    `--------------------------\n` +
+                    `📦 *ТОВАРЫ:*\n${productList}\n` +
+                    `💰 *ИТОГО К ОПЛАТЕ:* ${total.toLocaleString()} ₸\n\n` +
+                    `🚀 _Жду реквизиты для оплаты_`;
+
+    const bossPhone = "87072745020"; 
+    const url = `https://wa.me/${bossPhone}?text=${encodeURIComponent(message)}`;
+    
+    window.open(url, '_blank');
+}
+
+// --- АНИМАЦИИ И СКРОЛЛ ---
+
+function revealProducts() {
+    const cards = document.querySelectorAll('.product-card');
+    cards.forEach((card, index) => {
+        const cardTop = card.getBoundingClientRect().top;
+        const triggerPoint = window.innerHeight - 100;
+
+        if (cardTop < triggerPoint) {
+            setTimeout(() => {
+                card.classList.add('show');
+            }, index * 150); 
+        }
+    });
+}
 
 document.addEventListener("DOMContentLoaded", function () {
-    renderCart(); // Инициализация корзины при загрузке
+    renderCart();
 
-    // Анимация появления карточек товаров
+    // IntersectionObserver для карточек (дублирует логику revealProducts, но более современно)
     const cards = document.querySelectorAll(".product-card");
     const observer = new IntersectionObserver(entries => {
         entries.forEach(entry => {
@@ -82,24 +128,29 @@ document.addEventListener("DOMContentLoaded", function () {
                 entry.target.classList.add("show");
             }
         });
-    }, { threshold: 0.2 });
+    }, { threshold: 0.1 });
 
     cards.forEach(card => observer.observe(card));
 
-    // Анимация промо-блока
+    // Промо-блок
     const promoContent = document.querySelector(".promo-content");
-    const promoObserver = new IntersectionObserver(entries => {
-        entries.forEach(entry => {
-            if (entry.isIntersecting) {
-                entry.target.classList.add("show");
-            }
-        });
-    }, { threshold: 0.3 });
-
-    if (promoContent) promoObserver.observe(promoContent);
+    if (promoContent) {
+        const promoObserver = new IntersectionObserver(entries => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add("show");
+                }
+            });
+        }, { threshold: 0.3 });
+        promoObserver.observe(promoContent);
+    }
 });
 
-// Плавная прокрутка для ссылок-якорей
+// Слушатели событий
+window.addEventListener('scroll', revealProducts);
+window.addEventListener('load', revealProducts);
+
+// Плавная прокрутка
 document.querySelectorAll('a[href^="#"], a[href*="index.php#"]').forEach(anchor => {
     anchor.addEventListener('click', function (e) {
         const href = this.getAttribute('href');
@@ -116,62 +167,3 @@ document.querySelectorAll('a[href^="#"], a[href*="index.php#"]').forEach(anchor 
         }
     });
 });
-
-function openCheckoutForm() {
-    if (cart.length === 0) return alert("Корзина пуста!");
-    document.getElementById("checkout-modal").style.display = "block";
-    document.getElementById("final-price").textContent = total.toLocaleString();
-}
-
-function closeCheckoutForm() {
-    document.getElementById("checkout-modal").style.display = "none";
-}
-
-function sendOrder(event) {
-    event.preventDefault();
-
-    // Генерируем случайный номер заказа для сверки
-    const orderNumber = "№" + Math.floor(Math.random() * 90000 + 10000);
-    
-    const fio = document.getElementById("fio").value;
-    const phone = document.getElementById("phone").value;
-    // ... (остальные поля как раньше)
-
-    let productList = "";
-    cart.forEach((item, index) => {
-        productList += `${index + 1}. ${item.name} — ${item.price} ₸\n`;
-    });
-
-    // Формируем текст сообщения
-    const message = `🛍️ ЗАКАЗ ${orderNumber}\n\n` +
-                    `👤 Клиент: ${fio}\n` +
-                    `📞 Тел: ${phone}\n` +
-                    `📦 ТОВАРЫ:\n${productList}\n` +
-                    `💰 ИТОГО К ОПЛАТЕ: ${total} ₸\n\n`;
-
-    const bossPhone = "87072745020"; // Номер босса для получения заказа
-    const url = `https://wa.me/${bossPhone}?text=${encodeURIComponent(message)}`;
-    
-    // Очистка и переход
-    window.open(url, '_blank');
-}
-
-// Функция запуска анимации при прокрутке до секции
-function revealProducts() {
-    const cards = document.querySelectorAll('.product-card');
-    cards.forEach((card, index) => {
-        const cardTop = card.getBoundingClientRect().top;
-        const triggerPoint = window.innerHeight - 100;
-
-        if (cardTop < triggerPoint) {
-            // Добавляем задержку для каждой следующей карточки (эффект лесенки)
-            setTimeout(() => {
-                card.classList.add('show');
-            }, index * 150); 
-        }
-    });
-}
-
-// Запускаем при скролле и при загрузке страницы
-window.addEventListener('scroll', revealProducts);
-window.addEventListener('load', revealProducts);
